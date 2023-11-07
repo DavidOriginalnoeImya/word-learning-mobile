@@ -1,7 +1,7 @@
 import {makeAutoObservable} from "mobx";
 import axios from "axios";
 
-export interface Phrase {
+export interface IPhrase {
     phrase: string;
     translation: string;
 }
@@ -9,7 +9,7 @@ export interface Phrase {
 class PhraseStore {
     private serverUrl = "http://192.168.31.152:8086";
 
-    phrases: Phrase[] = [];
+    phrases: IPhrase[] = [];
 
     constructor() {
         makeAutoObservable(this);
@@ -17,14 +17,14 @@ class PhraseStore {
     }
 
     private async initPhrases() {
-        const { data } = await axios.get<Phrase>(this.serverUrl + "/api/phrases");
+        const { data } = await axios.get<IPhrase>(this.serverUrl + "/api/phrases");
 
         if (Array.isArray(data)) {
             this.setPhrases(data);
         }
     }
 
-    private setPhrases(phrases: Phrase[]) {
+    private setPhrases(phrases: IPhrase[]) {
         this.phrases = phrases;
     }
 }
