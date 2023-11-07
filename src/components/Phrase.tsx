@@ -1,6 +1,6 @@
 import React, {FC, useState} from 'react';
-import {Card} from "@rneui/themed";
-import {TextInput} from "react-native";
+import {Card, Text} from "@rneui/themed";
+import {StyleSheet, TextInput, View} from "react-native";
 import {IPhrase} from "../stores/PhraseStore";
 import getStrBaseView from "../utils/getStringBaseView";
 
@@ -17,13 +17,15 @@ const Phrase: FC<PhraseComponent> = ({ phrase, checked }) => {
     }
 
     return (
-        <Card>
+        <Card containerStyle={styles.card}>
             {
                 !checked &&
                 <>
-                    <Card.Title>
-                        {phrase.phrase}
-                    </Card.Title>
+                    <View style={styles.phrase}>
+                        <Text h1>
+                            {phrase.phrase}
+                        </Text>
+                    </View>
                     <Card.Divider/>
                     <TextInput
                         placeholder="Enter your translation..."
@@ -33,14 +35,25 @@ const Phrase: FC<PhraseComponent> = ({ phrase, checked }) => {
             }
             {
                 checked &&
-                <>
-                    <Card.Title style={{color: getAnswerColor()}}>
+                <View style={{...styles.phrase, marginTop: "80%"}}>
+                    <Text style={{color: getAnswerColor()}} h3>
                         {phrase.translation}
-                    </Card.Title>
-                </>
+                    </Text>
+                </View>
             }
         </Card>
     );
 };
+
+const styles = StyleSheet.create({
+    phrase: {
+        justifyContent: "center",
+        alignItems: "center"
+    },
+    card: {
+        flex: 1,
+        borderRadius: 20
+    }
+});
 
 export default Phrase;
