@@ -20,8 +20,16 @@ const App = () => {
     return (
         <NavigationContainer>
             <Stack.Navigator>
-                <Stack.Screen name="Home" component={Home} />
-                <Stack.Screen name="Phrases" component={PhraseList}/>
+                <Stack.Screen
+                    name="Home"
+                    component={Home}
+                    options={{headerShown: false}}
+                />
+                <Stack.Screen
+                    name="Phrases"
+                    component={PhraseList}
+                    options={{ title: "" }}
+                />
             </Stack.Navigator>
         </NavigationContainer>
     );

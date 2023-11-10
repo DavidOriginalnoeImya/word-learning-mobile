@@ -37,7 +37,6 @@ const Home: FC<IHomeComponent> = ({ navigation }) => {
                 }
             }
         >
-            <Text>Home screen</Text>
             <Button
                 title="Start learning"
                 onPress={() => onStartButtonPress()}
