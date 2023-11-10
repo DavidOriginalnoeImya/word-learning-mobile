@@ -1,14 +1,19 @@
 import React, {FC, useState} from 'react';
-import {GestureResponderEvent, TextInput, View} from "react-native";
-import {Card, Icon} from '@rneui/themed';
-import {IPhrase} from "../stores/PhraseStore";
+import {GestureResponderEvent, View} from "react-native";
+import {Icon} from '@rneui/themed';
 import Phrase from "./Phrase";
+import {NativeStackScreenProps} from "@react-navigation/native-stack";
+import {StackScreenParams} from "../../App";
+
+export type PhraseListProps = NativeStackScreenProps<StackScreenParams, "Phrases">;
 
 interface IPhraseListComponent {
-    phrases: IPhrase[];
+    route: PhraseListProps["route"];
 }
 
-const PhraseList: FC<IPhraseListComponent> = ({ phrases }) => {
+const PhraseList: FC<IPhraseListComponent> = ({ route }) => {
+    const { phrases } = route.params;
+
     const [curPhraseIndex, setCurPhraseIndex] = useState(0);
 
     const [checked, setChecked] = useState(false);

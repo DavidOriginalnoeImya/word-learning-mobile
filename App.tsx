@@ -1,35 +1,30 @@
 import React from 'react';
-import {Text, View} from "react-native";
 import PhraseList from "./src/components/PhraseList";
 import 'react-native-gesture-handler';
-import phraseStore from "./src/stores/PhraseStore";
-import {observer} from "mobx-react-lite";
+import phraseStore, {IPhrase} from "./src/stores/PhraseStore";
+import {NavigationContainer} from "@react-navigation/native";
+import {createNativeStackNavigator} from "@react-navigation/native-stack";
+import Home from "./src/components/Home";
+
+export type StackScreenParams = {
+    Home: undefined;
+    Phrases: {phrases: IPhrase[]};
+}
 
 const App = () => {
 
     const { phrases } = phraseStore;
 
-    if (phrases.length === 0) {
-        return (
-            <View
-                style={
-                    {
-                        flex: 1,
-                        justifyContent: "center",
-                        alignItems: "center"
-                    }
-                }
-            >
-                <Text>Phrase list is empty</Text>
-            </View>
-        );
-    }
+    const Stack = createNativeStackNavigator<StackScreenParams>();
 
     return (
-        <View style={{flex: 1}}>
-          <PhraseList phrases={phrases}/>
-        </View>
+        <NavigationContainer>
+            <Stack.Navigator>
+                <Stack.Screen name="Home" component={Home} />
+                <Stack.Screen name="Phrases" component={PhraseList}/>
+            </Stack.Navigator>
+        </NavigationContainer>
     );
 };
 
-export default observer(App);
+export default App;

@@ -13,10 +13,9 @@ class PhraseStore {
 
     constructor() {
         makeAutoObservable(this);
-        this.initPhrases();
     }
 
-    private async initPhrases() {
+    public async initPhrases() {
         const { data } = await axios.get<IPhrase>(this.serverUrl + "/api/phrases");
 
         if (Array.isArray(data)) {
