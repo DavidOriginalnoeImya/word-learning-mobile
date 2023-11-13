@@ -9,7 +9,10 @@ import AddPhraseForm from "./src/components/AddPhraseForm";
 
 export type StackScreenParams = {
     Home: undefined;
-    Phrases: {phrases: IPhrase[]};
+    Phrases: {
+        phrases: IPhrase[],
+        onBackButtonPress: () => void
+    };
     AddPhraseForm: undefined;
 }
 

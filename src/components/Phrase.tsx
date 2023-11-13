@@ -2,7 +2,7 @@ import React, {FC, useState} from 'react';
 import {Card, Text} from "@rneui/themed";
 import {StyleSheet, TextInput, View} from "react-native";
 import {IPhrase} from "../stores/PhraseStore";
-import getStrBaseView from "../utils/getStringBaseView";
+import isStringsEqual from "../utils/isStringsEqual";
 
 interface PhraseComponent {
     phrase: IPhrase;
@@ -13,7 +13,15 @@ const Phrase: FC<PhraseComponent> = ({ phrase, checked }) => {
     const [answer, setAnswer] = useState("");
 
     const getAnswerColor = () => {
-        return getStrBaseView(phrase.translation) === getStrBaseView(answer) ? "green" : "red";
+        return isStringsEqual(phrase.translation, answer) ? "green" : "red";
+    }
+
+    const onChangeText = (input: string) => {
+        setAnswer(input);
+
+        if (isStringsEqual(input, phrase.translation)) {
+            phrase.correctTranslationGiven = true;
+        }
     }
 
     return (
@@ -29,7 +37,7 @@ const Phrase: FC<PhraseComponent> = ({ phrase, checked }) => {
                     <Card.Divider/>
                     <TextInput
                         placeholder="Enter your translation..."
-                        onChangeText={(text => setAnswer(text))}
+                        onChangeText={onChangeText}
                     />
                 </>
             }

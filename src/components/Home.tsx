@@ -20,12 +20,19 @@ const Home: FC<IHomeComponent> = ({ navigation }) => {
         phraseStore.initPhrases();
     }, []);
 
+    const onPhrasesBackButtonPress = () => {
+        phraseStore.saveTranslatedPhrases();
+        navigation.pop();
+    }
+
     const isPhrasesEmpty = () => {
         return phrases.length === 0;
     }
 
     const onStartButtonPress = () => {
-        navigation.navigate("Phrases", {phrases: phrases});
+        navigation.navigate("Phrases", {
+            phrases: phrases, onBackButtonPress: onPhrasesBackButtonPress
+        });
     }
 
     const onAddIconPress = () => {

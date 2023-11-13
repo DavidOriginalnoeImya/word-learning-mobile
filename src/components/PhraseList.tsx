@@ -1,17 +1,20 @@
-import React, {FC, useState} from 'react';
-import {GestureResponderEvent, View} from "react-native";
+import React, {FC, useEffect, useState} from 'react';
+import {BackHandler, GestureResponderEvent, View} from "react-native";
 import {Icon} from '@rneui/themed';
 import Phrase from "./Phrase";
 import {NativeStackScreenProps} from "@react-navigation/native-stack";
 import {StackScreenParams} from "../../App";
+import phraseStore from "../stores/PhraseStore";
+import {HeaderBackButton} from "@react-navigation/elements";
 
 export type PhraseListProps = NativeStackScreenProps<StackScreenParams, "Phrases">;
 
 interface IPhraseListComponent {
+    navigation: PhraseListProps["navigation"];
     route: PhraseListProps["route"];
 }
 
-const PhraseList: FC<IPhraseListComponent> = ({ route }) => {
+const PhraseList: FC<IPhraseListComponent> = ({ route, navigation }) => {
     const { phrases } = route.params;
 
     const [curPhraseIndex, setCurPhraseIndex] = useState(0);
@@ -35,6 +38,17 @@ const PhraseList: FC<IPhraseListComponent> = ({ route }) => {
         e.preventDefault();
         setChecked(!checked);
     }
+
+    useEffect( () => {
+        navigation.setOptions({
+            headerLeft: (props) => (
+                <HeaderBackButton
+                    {...props}
+                    onPress={route.params.onBackButtonPress}
+                />
+            )
+        });
+    }, []);
 
     return (
         <>
