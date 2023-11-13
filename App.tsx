@@ -1,19 +1,19 @@
 import React from 'react';
 import PhraseList from "./src/components/PhraseList";
 import 'react-native-gesture-handler';
-import phraseStore, {IPhrase} from "./src/stores/PhraseStore";
+import {IPhrase} from "./src/stores/PhraseStore";
 import {NavigationContainer} from "@react-navigation/native";
 import {createNativeStackNavigator} from "@react-navigation/native-stack";
 import Home from "./src/components/Home";
+import AddPhraseForm from "./src/components/AddPhraseForm";
 
 export type StackScreenParams = {
     Home: undefined;
     Phrases: {phrases: IPhrase[]};
+    AddPhraseForm: undefined;
 }
 
 const App = () => {
-
-    const { phrases } = phraseStore;
 
     const Stack = createNativeStackNavigator<StackScreenParams>();
 
@@ -28,6 +28,11 @@ const App = () => {
                 <Stack.Screen
                     name="Phrases"
                     component={PhraseList}
+                    options={{ title: "" }}
+                />
+                <Stack.Screen
+                    name="AddPhraseForm"
+                    component={AddPhraseForm}
                     options={{ title: "" }}
                 />
             </Stack.Navigator>

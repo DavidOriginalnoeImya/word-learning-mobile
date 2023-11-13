@@ -4,6 +4,7 @@ import {NativeStackScreenProps} from "@react-navigation/native-stack";
 import {StackScreenParams} from "../../App";
 import phraseStore from "../stores/PhraseStore";
 import {observer} from "mobx-react-lite";
+import {Icon} from "@rneui/themed";
 
 export type HomeProps = NativeStackScreenProps<StackScreenParams, "Home">;
 
@@ -27,6 +28,10 @@ const Home: FC<IHomeComponent> = ({ navigation }) => {
         navigation.navigate("Phrases", {phrases: phrases});
     }
 
+    const onAddIconPress = () => {
+        navigation.navigate("AddPhraseForm");
+    }
+
     return (
         <View
             style={
@@ -37,6 +42,11 @@ const Home: FC<IHomeComponent> = ({ navigation }) => {
                 }
             }
         >
+            <Icon
+                onPress={() => onAddIconPress()}
+                name="plus" type="font-awesome"
+                reverse
+            />
             <Button
                 title="Start learning"
                 onPress={() => onStartButtonPress()}
