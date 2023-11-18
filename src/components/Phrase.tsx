@@ -16,14 +16,6 @@ const Phrase: FC<PhraseComponent> = ({ phrase, checked }) => {
         return isStringsEqual(phrase.translation, answer) ? "green" : "red";
     }
 
-    const onChangeText = (input: string) => {
-        setAnswer(input);
-
-        if (isStringsEqual(input, phrase.translation)) {
-            phrase.correctTranslationGiven = true;
-        }
-    }
-
     return (
         <Card containerStyle={styles.card}>
             {
@@ -37,7 +29,7 @@ const Phrase: FC<PhraseComponent> = ({ phrase, checked }) => {
                     <Card.Divider/>
                     <TextInput
                         placeholder="Enter your translation..."
-                        onChangeText={onChangeText}
+                        onChangeText={setAnswer}
                     />
                 </>
             }

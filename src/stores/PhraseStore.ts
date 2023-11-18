@@ -8,7 +8,7 @@ interface IServerPhrase {
 }
 
 export interface IPhrase extends IServerPhrase {
-    correctTranslationGiven: boolean;
+    memorized: boolean;
 }
 
 class PhraseStore {
@@ -30,11 +30,17 @@ class PhraseStore {
 
     public saveTranslatedPhrases = () => {
         const translatedPhrases = this.phrases
-            .filter(p => p.correctTranslationGiven)
+            .filter(p => p.memorized)
             .map(p => this.convertToServerPhrase(p));
 
         if (translatedPhrases.length > 0) {
             axios.put(this.serverUrl, translatedPhrases);
+        }
+    }
+
+    public setPhraseMemorized = (phraseIndex: number, memorized: boolean = true) => {
+        if (phraseIndex > 0 && phraseIndex < this.phrases.length) {
+            this.phrases[phraseIndex].memorized = memorized;
         }
     }
 

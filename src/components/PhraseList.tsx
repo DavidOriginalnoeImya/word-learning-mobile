@@ -1,11 +1,11 @@
 import React, {FC, useEffect, useState} from 'react';
-import {BackHandler, GestureResponderEvent, View} from "react-native";
-import {Icon} from '@rneui/themed';
+import {GestureResponderEvent} from "react-native";
 import Phrase from "./Phrase";
 import {NativeStackScreenProps} from "@react-navigation/native-stack";
 import {StackScreenParams} from "../../App";
-import phraseStore from "../stores/PhraseStore";
 import {HeaderBackButton} from "@react-navigation/elements";
+import PhraseNavigationPanel from "./PhraseNavigationPanel";
+import phraseStore from "../stores/PhraseStore";
 
 export type PhraseListProps = NativeStackScreenProps<StackScreenParams, "Phrases">;
 
@@ -21,21 +21,17 @@ const PhraseList: FC<IPhraseListComponent> = ({ route, navigation }) => {
 
     const [checked, setChecked] = useState(false);
 
-    const getPrevPhraseIndex = () => {
-        return curPhraseIndex === 0 ? phrases.length - 1 : curPhraseIndex - 1;
-    }
-
     const getNextPhraseIndex = () => {
         return curPhraseIndex === phrases.length - 1 ? 0 : curPhraseIndex + 1;
     }
 
-    const onChangePhraseButtonPress = (nextPhraseIndex: number) => {
-        setCurPhraseIndex(nextPhraseIndex);
+    const onSavePhraseButtonPress = (phraseMemorized: boolean) => {
+        phraseStore.setPhraseMemorized(curPhraseIndex, phraseMemorized);
+        setCurPhraseIndex(getNextPhraseIndex);
         setChecked(false);
     }
 
-    const onCheckButtonPress = (e: GestureResponderEvent) => {
-        e.preventDefault();
+    const onCheckButtonPress = () => {
         setChecked(!checked);
     }
 
@@ -56,27 +52,11 @@ const PhraseList: FC<IPhraseListComponent> = ({ route, navigation }) => {
                 phrase={phrases[curPhraseIndex]}
                 checked={checked}
             />
-            <View style={
-                {
-                    marginTop: 10,
-                    flexDirection: "row",
-                    justifyContent: "center"
-                }
-            }>
-                <Icon
-                    onPress={() => onChangePhraseButtonPress(getPrevPhraseIndex())}
-                    name="chevron-left"
-                    reverse
-                />
-                <Icon
-                    onPress={onCheckButtonPress}
-                    name="check" reverse/>
-                <Icon
-                    onPress={() => onChangePhraseButtonPress(getNextPhraseIndex())}
-                    name="chevron-right"
-                    reverse
-                />
-            </View>
+            <PhraseNavigationPanel
+                onSavePhrasePress={() => onSavePhraseButtonPress(true)}
+                onDropPhrasePress={() => onSavePhraseButtonPress(false)}
+                onCheckPhrasePress={onCheckButtonPress}
+            />
         </>
     );
 };
