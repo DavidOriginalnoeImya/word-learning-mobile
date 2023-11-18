@@ -1,5 +1,4 @@
 import React, {FC, useEffect, useState} from 'react';
-import {GestureResponderEvent} from "react-native";
 import Phrase from "./Phrase";
 import {NativeStackScreenProps} from "@react-navigation/native-stack";
 import {StackScreenParams} from "../../App";

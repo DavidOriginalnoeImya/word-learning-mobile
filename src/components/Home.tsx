@@ -1,5 +1,5 @@
 import React, {FC, useEffect} from 'react';
-import {Button, Text, View} from "react-native";
+import {Button, View} from "react-native";
 import {NativeStackScreenProps} from "@react-navigation/native-stack";
 import {StackScreenParams} from "../../App";
 import phraseStore from "../stores/PhraseStore";
@@ -21,7 +21,7 @@ const Home: FC<IHomeComponent> = ({ navigation }) => {
     }, []);
 
     const onPhrasesBackButtonPress = () => {
-        phraseStore.saveTranslatedPhrases();
+        phraseStore.saveTranslatedPhrases(phraseStore.initPhrases);
         navigation.pop();
     }
 
