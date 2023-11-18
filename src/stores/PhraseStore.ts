@@ -25,7 +25,6 @@ class PhraseStore {
     }
 
     public initPhrases = async () => {
-        this.allPhrases.forEach(p => console.log(p.phrase))
         if (this.allPhrases.length < this.PHRASE_BATCH_SIZE) {
             const { data } = await axios.get<IPhrase[]>(this.serverUrl);
 
@@ -58,18 +57,8 @@ class PhraseStore {
         }
     }
 
-
-
     private getPhraseIds(phrases: IPhrase[]) {
         return new Set<bigint>(phrases.map(p => p.id));
-    }
-
-    private getPhrasesFromServer = async () => {
-        const { data } = await axios.get<IPhrase>(this.serverUrl);
-
-        if (Array.isArray(data)) {
-            this.setAllPhrases(data);
-        }
     }
 
     private getPhraseForSaving(phrases: IPhrase[]) {
@@ -86,10 +75,6 @@ class PhraseStore {
                 !memorizedPhraseIds.has(p.id)
             )
         );
-    }
-
-    private getUnmemorizedPhrases() {
-        return this.allPhrases.filter(p => !p.memorized);
     }
 
     private setAllPhrases(phrases: IPhrase[]) {
