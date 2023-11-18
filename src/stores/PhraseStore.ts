@@ -2,7 +2,7 @@ import {makeAutoObservable} from "mobx";
 import axios from "axios";
 
 interface IServerPhrase {
-    id: string;
+    id: bigint;
     phrase: string;
     translation: string;
 }
@@ -39,7 +39,7 @@ class PhraseStore {
     }
 
     public setPhraseMemorized = (phraseIndex: number, memorized: boolean = true) => {
-        if (phraseIndex > 0 && phraseIndex < this.phrases.length) {
+        if (phraseIndex >= 0 && phraseIndex < this.phrases.length) {
             this.phrases[phraseIndex].memorized = memorized;
         }
     }
