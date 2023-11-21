@@ -1,8 +1,10 @@
 import React, {FC, useState} from 'react';
-import {Card, Text} from "@rneui/themed";
-import {StyleSheet, TextInput, View} from "react-native";
+import {Card, Icon, Text} from "@rneui/themed";
+import {Button, StyleSheet, TextInput, View} from "react-native";
 import {IPhrase} from "../stores/PhraseStore";
 import isStringsEqual from "../utils/isStringsEqual";
+import speaker from "../utils/Speaker";
+import {BaseButton, BorderlessButton, RectButton, TouchableWithoutFeedback} from "react-native-gesture-handler";
 
 interface PhraseComponent {
     phrase: IPhrase;
@@ -21,11 +23,20 @@ const Phrase: FC<PhraseComponent> = ({ phrase, checked }) => {
             {
                 !checked &&
                 <>
-                    <View style={styles.phrase}>
-                        <Text h1>
-                            {phrase.phrase}
-                        </Text>
-                    </View>
+                    <RectButton
+                        disallowInterruption
+                        onPress={() => speaker.speak(phrase.phrase)}
+                    >
+                        <View style={styles.phrase} pointerEvents="none">
+                            <Icon
+                                name="play" type="font-awesome"
+                                style={styles.play_btn}
+                            />
+                            <Text h1>
+                                {phrase.phrase}
+                            </Text>
+                        </View>
+                    </RectButton>
                     <Card.Divider/>
                     <TextInput
                         placeholder="Enter your translation..."
@@ -48,12 +59,17 @@ const Phrase: FC<PhraseComponent> = ({ phrase, checked }) => {
 const styles = StyleSheet.create({
     phrase: {
         justifyContent: "center",
-        alignItems: "center"
+        alignItems: "center",
+        flexDirection: "row"
     },
     card: {
         flex: 1,
         borderRadius: 20,
         marginBottom: 10
+    },
+    play_btn: {
+        marginRight: 5,
+        marginTop: 10
     }
 });
 
