@@ -11,9 +11,11 @@ export type PhraseListProps = NativeStackScreenProps<StackScreenParams, "Phrases
 interface IPhraseListComponent {
     navigation: PhraseListProps["navigation"];
     route: PhraseListProps["route"];
+    onPhraseFling: (curPhraseIndex: number, phraseMemorized: boolean) => void;
+    onBackButtonPress: () => void;
 }
 
-const PhraseList: FC<IPhraseListComponent> = ({ route, navigation }) => {
+const PhraseList: FC<IPhraseListComponent> = ({ route, navigation, onPhraseFling, onBackButtonPress }) => {
     const { phrases } = route.params;
 
     const [curPhraseIndex, setCurPhraseIndex] = useState(0);
@@ -24,9 +26,14 @@ const PhraseList: FC<IPhraseListComponent> = ({ route, navigation }) => {
         return curPhraseIndex === phrases.length - 1 ? 0 : curPhraseIndex + 1;
     }
 
-    const onFlingeGesture = (phraseMemorized: boolean) => {
+    const onBackPress = () => {
+        onBackButtonPress();
+        navigation.pop();
+    }
+
+    const onFlingGesture = (phraseMemorized: boolean) => {
         if (checked) {
-            phraseStore.setPhraseMemorized(curPhraseIndex, phraseMemorized);
+            onPhraseFling(curPhraseIndex, phraseMemorized);
             setCurPhraseIndex(getNextPhraseIndex());
             setChecked(false);
         }
@@ -37,11 +44,11 @@ const PhraseList: FC<IPhraseListComponent> = ({ route, navigation }) => {
 
     const rightFlingGesture =  Gesture.Fling()
         .direction(Directions.RIGHT)
-        .onStart(() => onFlingeGesture(true));
+        .onStart(() => onFlingGesture(true));
 
     const leftFlingGesture =  Gesture.Fling()
         .direction(Directions.LEFT)
-        .onStart(() => onFlingeGesture(false));
+        .onStart(() => onFlingGesture(false));
 
     const gesture = Gesture.Race(
         singleTapGesture,
@@ -54,7 +61,7 @@ const PhraseList: FC<IPhraseListComponent> = ({ route, navigation }) => {
             headerLeft: (props) => (
                 <HeaderBackButton
                     {...props}
-                    onPress={route.params.onBackButtonPress}
+                    onPress={onBackPress}
                 />
             )
         });

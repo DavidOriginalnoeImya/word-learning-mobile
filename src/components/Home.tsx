@@ -30,9 +30,7 @@ const Home: FC<IHomeComponent> = ({ navigation }) => {
     }
 
     const onStartButtonPress = () => {
-        navigation.navigate("Phrases", {
-            phrases: phrases, onBackButtonPress: onPhrasesBackButtonPress
-        });
+        navigation.navigate("Phrases", { phrases: phrases });
     }
 
     const onAddIconPress = () => {
