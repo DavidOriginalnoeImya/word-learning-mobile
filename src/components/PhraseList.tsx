@@ -3,7 +3,6 @@ import Phrase from "./Phrase";
 import {NativeStackScreenProps} from "@react-navigation/native-stack";
 import {StackScreenParams} from "../../App";
 import {HeaderBackButton} from "@react-navigation/elements";
-import PhraseNavigationPanel from "./PhraseNavigationPanel";
 import phraseStore from "../stores/PhraseStore";
 import {Directions, Gesture, GestureDetector} from "react-native-gesture-handler";
 
@@ -31,12 +30,8 @@ const PhraseList: FC<IPhraseListComponent> = ({ route, navigation }) => {
         setChecked(false);
     }
 
-    const onCheckButtonPress = () => {
-        setChecked(!checked);
-    }
-
     const singleTapGesture = Gesture.Tap()
-        .onStart(onCheckButtonPress);
+        .onStart(() => setChecked(!checked));
 
     const rightFlingGesture =  Gesture.Fling()
         .direction(Directions.RIGHT)
@@ -64,21 +59,12 @@ const PhraseList: FC<IPhraseListComponent> = ({ route, navigation }) => {
     }, []);
 
     return (
-        <>
-            <GestureDetector
-                gesture={gesture}
-            >
-                <Phrase
-                    phrase={phrases[curPhraseIndex]}
-                    checked={checked}
-                />
-            </GestureDetector>
-            <PhraseNavigationPanel
-                onSavePhrasePress={() => onSavePhraseButtonPress(true)}
-                onDropPhrasePress={() => onSavePhraseButtonPress(false)}
-                onCheckPhrasePress={onCheckButtonPress}
+        <GestureDetector gesture={gesture}>
+            <Phrase
+                phrase={phrases[curPhraseIndex]}
+                checked={checked}
             />
-        </>
+        </GestureDetector>
     );
 };
 
