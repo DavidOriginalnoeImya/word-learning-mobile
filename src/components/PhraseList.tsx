@@ -5,6 +5,7 @@ import {StackScreenParams} from "../../App";
 import {HeaderBackButton} from "@react-navigation/elements";
 import PhraseNavigationPanel from "./PhraseNavigationPanel";
 import phraseStore from "../stores/PhraseStore";
+import {Gesture, GestureDetector, TapGestureHandler} from "react-native-gesture-handler";
 
 export type PhraseListProps = NativeStackScreenProps<StackScreenParams, "Phrases">;
 
@@ -34,6 +35,9 @@ const PhraseList: FC<IPhraseListComponent> = ({ route, navigation }) => {
         setChecked(!checked);
     }
 
+    const singleTap = Gesture.Tap()
+        .onStart(onCheckButtonPress);
+
     useEffect( () => {
         navigation.setOptions({
             headerLeft: (props) => (
@@ -47,10 +51,14 @@ const PhraseList: FC<IPhraseListComponent> = ({ route, navigation }) => {
 
     return (
         <>
-            <Phrase
-                phrase={phrases[curPhraseIndex]}
-                checked={checked}
-            />
+            <GestureDetector
+                gesture={singleTap}
+            >
+                <Phrase
+                    phrase={phrases[curPhraseIndex]}
+                    checked={checked}
+                />
+            </GestureDetector>
             <PhraseNavigationPanel
                 onSavePhrasePress={() => onSavePhraseButtonPress(true)}
                 onDropPhrasePress={() => onSavePhraseButtonPress(false)}
