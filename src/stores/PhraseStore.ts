@@ -14,7 +14,7 @@ export interface IPhrase extends IServerPhrase {
 class PhraseStore {
     private serverUrl = "http://192.168.31.152:8086/api/phrases";
 
-    private PHRASE_BATCH_SIZE = 3;
+    private PHRASE_BATCH_SIZE = 10;
 
     private allPhrases: IPhrase[] = [];
 
