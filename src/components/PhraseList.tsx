@@ -5,7 +5,7 @@ import {StackScreenParams} from "../../App";
 import {HeaderBackButton} from "@react-navigation/elements";
 import PhraseNavigationPanel from "./PhraseNavigationPanel";
 import phraseStore from "../stores/PhraseStore";
-import {Gesture, GestureDetector, TapGestureHandler} from "react-native-gesture-handler";
+import {Directions, Gesture, GestureDetector} from "react-native-gesture-handler";
 
 export type PhraseListProps = NativeStackScreenProps<StackScreenParams, "Phrases">;
 
@@ -27,7 +27,7 @@ const PhraseList: FC<IPhraseListComponent> = ({ route, navigation }) => {
 
     const onSavePhraseButtonPress = (phraseMemorized: boolean) => {
         phraseStore.setPhraseMemorized(curPhraseIndex, phraseMemorized);
-        setCurPhraseIndex(getNextPhraseIndex);
+        setCurPhraseIndex(getNextPhraseIndex());
         setChecked(false);
     }
 
@@ -35,8 +35,22 @@ const PhraseList: FC<IPhraseListComponent> = ({ route, navigation }) => {
         setChecked(!checked);
     }
 
-    const singleTap = Gesture.Tap()
+    const singleTapGesture = Gesture.Tap()
         .onStart(onCheckButtonPress);
+
+    const rightFlingGesture =  Gesture.Fling()
+        .direction(Directions.RIGHT)
+        .onStart(() => onSavePhraseButtonPress(true));
+
+    const leftFlingGesture =  Gesture.Fling()
+        .direction(Directions.LEFT)
+        .onStart(() => onSavePhraseButtonPress(false));
+
+    const gesture = Gesture.Race(
+        singleTapGesture,
+        rightFlingGesture,
+        leftFlingGesture
+    );
 
     useEffect( () => {
         navigation.setOptions({
@@ -52,7 +66,7 @@ const PhraseList: FC<IPhraseListComponent> = ({ route, navigation }) => {
     return (
         <>
             <GestureDetector
-                gesture={singleTap}
+                gesture={gesture}
             >
                 <Phrase
                     phrase={phrases[curPhraseIndex]}
