@@ -24,10 +24,12 @@ const PhraseList: FC<IPhraseListComponent> = ({ route, navigation }) => {
         return curPhraseIndex === phrases.length - 1 ? 0 : curPhraseIndex + 1;
     }
 
-    const onSavePhraseButtonPress = (phraseMemorized: boolean) => {
-        phraseStore.setPhraseMemorized(curPhraseIndex, phraseMemorized);
-        setCurPhraseIndex(getNextPhraseIndex());
-        setChecked(false);
+    const onFlingeGesture = (phraseMemorized: boolean) => {
+        if (checked) {
+            phraseStore.setPhraseMemorized(curPhraseIndex, phraseMemorized);
+            setCurPhraseIndex(getNextPhraseIndex());
+            setChecked(false);
+        }
     }
 
     const singleTapGesture = Gesture.Tap()
@@ -35,11 +37,11 @@ const PhraseList: FC<IPhraseListComponent> = ({ route, navigation }) => {
 
     const rightFlingGesture =  Gesture.Fling()
         .direction(Directions.RIGHT)
-        .onStart(() => onSavePhraseButtonPress(true));
+        .onStart(() => onFlingeGesture(true));
 
     const leftFlingGesture =  Gesture.Fling()
         .direction(Directions.LEFT)
-        .onStart(() => onSavePhraseButtonPress(false));
+        .onStart(() => onFlingeGesture(false));
 
     const gesture = Gesture.Race(
         singleTapGesture,
