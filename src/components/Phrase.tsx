@@ -1,10 +1,10 @@
 import React, {FC, useState} from 'react';
 import {Card, Icon, Text} from "@rneui/themed";
-import {Button, StyleSheet, TextInput, View} from "react-native";
+import {StyleSheet, TextInput, View} from "react-native";
 import {IPhrase} from "../stores/PhraseStore";
 import isStringsEqual from "../utils/isStringsEqual";
 import speaker from "../utils/Speaker";
-import {BaseButton, BorderlessButton, RectButton, TouchableWithoutFeedback} from "react-native-gesture-handler";
+import {RectButton} from "react-native-gesture-handler";
 
 interface PhraseComponent {
     phrase: IPhrase;
@@ -25,7 +25,8 @@ const Phrase: FC<PhraseComponent> = ({ phrase, checked }) => {
                 <>
                     <RectButton
                         disallowInterruption
-                        onPress={() => speaker.speak(phrase.phrase)}
+                        delayLongPress={1}
+                        onLongPress={() => speaker.speak(phrase.phrase)}
                     >
                         <View style={styles.phrase} pointerEvents="none">
                             <Icon
