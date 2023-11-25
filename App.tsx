@@ -7,11 +7,12 @@ import {createNativeStackNavigator} from "@react-navigation/native-stack";
 import Home from "./src/components/Home";
 import AddPhraseForm from "./src/components/AddPhraseForm";
 import {GestureHandlerRootView} from "react-native-gesture-handler";
+import {Phrase} from "./src/model/Phrase";
 
 export type StackScreenParams = {
     Home: undefined;
     Phrases: {
-        phrases: IPhrase[],
+        phrases: Phrase[],
     };
     AddPhraseForm: undefined;
 }
@@ -40,7 +41,6 @@ const App = () => {
                                     onBackButtonPress={() =>
                                         phraseStore.saveTranslatedPhrases(phraseStore.initPhrases)
                                     }
-                                    onPhraseFling={phraseStore.setPhraseMemorized}
                                 />
                         }
                     </Stack.Screen>

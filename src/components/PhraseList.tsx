@@ -1,9 +1,8 @@
 import React, {FC, useEffect, useState} from 'react';
-import Phrase from "./Phrase";
+import PhraseCard from "./PhraseCard";
 import {NativeStackScreenProps} from "@react-navigation/native-stack";
 import {StackScreenParams} from "../../App";
 import {HeaderBackButton} from "@react-navigation/elements";
-import phraseStore from "../stores/PhraseStore";
 import {Directions, Gesture, GestureDetector} from "react-native-gesture-handler";
 
 export type PhraseListProps = NativeStackScreenProps<StackScreenParams, "Phrases">;
@@ -11,11 +10,10 @@ export type PhraseListProps = NativeStackScreenProps<StackScreenParams, "Phrases
 interface IPhraseListComponent {
     navigation: PhraseListProps["navigation"];
     route: PhraseListProps["route"];
-    onPhraseFling: (curPhraseIndex: number, phraseMemorized: boolean) => void;
     onBackButtonPress: () => void;
 }
 
-const PhraseList: FC<IPhraseListComponent> = ({ route, navigation, onPhraseFling, onBackButtonPress }) => {
+const PhraseList: FC<IPhraseListComponent> = ({ route, navigation, onBackButtonPress }) => {
     const { phrases } = route.params;
 
     const [curPhraseIndex, setCurPhraseIndex] = useState(0);
@@ -33,7 +31,6 @@ const PhraseList: FC<IPhraseListComponent> = ({ route, navigation, onPhraseFling
 
     const onFlingGesture = (phraseMemorized: boolean) => {
         if (checked) {
-            onPhraseFling(curPhraseIndex, phraseMemorized);
             setCurPhraseIndex(getNextPhraseIndex());
             setChecked(false);
         }
@@ -69,7 +66,7 @@ const PhraseList: FC<IPhraseListComponent> = ({ route, navigation, onPhraseFling
 
     return (
         <GestureDetector gesture={gesture}>
-            <Phrase
+            <PhraseCard
                 phrase={phrases[curPhraseIndex]}
                 checked={checked}
             />

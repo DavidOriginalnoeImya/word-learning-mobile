@@ -1,5 +1,6 @@
 import {makeAutoObservable} from "mobx";
 import axios from "axios";
+import {Phrase} from "../model/Phrase";
 
 interface IServerPhrase {
     id: bigint;
@@ -16,9 +17,9 @@ class PhraseStore {
 
     private PHRASE_BATCH_SIZE = 10;
 
-    private allPhrases: IPhrase[] = [];
+    private allPhrases: Phrase[] = [];
 
-    phrases: IPhrase[] = [];
+    phrases: Phrase[] = [];
 
     constructor() {
         makeAutoObservable(this);
@@ -26,7 +27,7 @@ class PhraseStore {
 
     public initPhrases = async () => {
         if (this.allPhrases.length < this.PHRASE_BATCH_SIZE) {
-            const { data } = await axios.get<IPhrase[]>(this.serverUrl);
+            const { data } = await axios.get<Phrase[]>(this.serverUrl);
 
             if (Array.isArray(data)) {
                 this.setAllPhrases(data);
@@ -51,19 +52,13 @@ class PhraseStore {
         }
     }
 
-    public setPhraseMemorized = (phraseIndex: number, memorized: boolean = true) => {
-        if (phraseIndex >= 0 && phraseIndex < this.phrases.length) {
-            this.phrases[phraseIndex].memorized = memorized;
-        }
-    }
-
     private getPhraseIds(phrases: IPhrase[]) {
         return new Set<bigint>(phrases.map(p => p.id));
     }
 
-    private getPhraseForSaving(phrases: IPhrase[]) {
+    private getPhraseForSaving(phrases: Phrase[]) {
         return phrases
-            .filter(p => p.memorized)
+            .filter(p => p.isMemorized())
             .map(p => this.convertToServerPhrase(p));
     }
 
@@ -77,15 +72,15 @@ class PhraseStore {
         );
     }
 
-    private setAllPhrases(phrases: IPhrase[]) {
+    private setAllPhrases(phrases: Phrase[]) {
         this.allPhrases = phrases;
     }
 
-    private setPhrases(phrases: IPhrase[]) {
+    private setPhrases(phrases: Phrase[]) {
         this.phrases = phrases;
     }
 
-    private convertToServerPhrase(phrase: IPhrase): IServerPhrase {
+    private convertToServerPhrase(phrase: Phrase): IServerPhrase {
         return {
             id: phrase.id,
             phrase: phrase.phrase,

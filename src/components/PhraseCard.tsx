@@ -1,17 +1,17 @@
 import React, {FC, useState} from 'react';
 import {Card, Icon, Text} from "@rneui/themed";
 import {StyleSheet, TextInput, View} from "react-native";
-import {IPhrase} from "../stores/PhraseStore";
 import isStringsEqual from "../utils/isStringsEqual";
 import speaker from "../utils/Speaker";
 import {RectButton} from "react-native-gesture-handler";
+import {Phrase} from "../model/Phrase";
 
 interface PhraseComponent {
-    phrase: IPhrase;
+    phrase: Phrase;
     checked: boolean;
 }
 
-const Phrase: FC<PhraseComponent> = ({ phrase, checked }) => {
+const PhraseCard: FC<PhraseComponent> = ({ phrase, checked }) => {
     const [answer, setAnswer] = useState("");
 
     const getAnswerColor = () => {
@@ -74,4 +74,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default Phrase;
+export default PhraseCard;
