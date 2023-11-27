@@ -3,15 +3,14 @@ import {Card, Icon, Text} from "@rneui/themed";
 import {StyleSheet, TextInput, View} from "react-native";
 import isStringsEqual from "../utils/isStringsEqual";
 import speaker from "../utils/Speaker";
-import {RectButton} from "react-native-gesture-handler";
+import {Directions, Gesture, GestureDetector, RectButton} from "react-native-gesture-handler";
 import {Phrase} from "../model/Phrase";
 
 interface PhraseComponent {
     phrase: Phrase;
-    checked: boolean;
 }
 
-const PhraseCard: FC<PhraseComponent> = ({ phrase, checked }) => {
+const PhraseCard: FC<PhraseComponent> = ({ phrase }) => {
     const [answer, setAnswer] = useState("");
 
     const getAnswerColor = () => {
@@ -20,39 +19,24 @@ const PhraseCard: FC<PhraseComponent> = ({ phrase, checked }) => {
 
     return (
         <Card containerStyle={styles.card}>
-            {
-                !checked &&
-                <>
-                    <RectButton
-                        disallowInterruption
-                        delayLongPress={1}
-                        onLongPress={() => speaker.speak(phrase.phrase)}
-                    >
-                        <View style={styles.phrase} pointerEvents="none">
-                            <Icon
-                                name="play" type="font-awesome"
-                                style={styles.play_btn}
-                            />
-                            <Text h1>
-                                {phrase.phrase}
-                            </Text>
-                        </View>
-                    </RectButton>
-                    <Card.Divider/>
-                    <TextInput
-                        placeholder="Enter your translation..."
-                        onChangeText={setAnswer}
-                    />
-                </>
-            }
-            {
-                checked &&
-                <View style={{...styles.phrase, marginTop: "80%"}}>
-                    <Text style={{color: getAnswerColor()}} h3>
-                        {phrase.translation}
+            <RectButton
+                disallowInterruption
+                delayLongPress={1}
+                onLongPress={() => speaker.speak(phrase.phrase)}
+            >
+                <View style={styles.phrase} pointerEvents="none">
+                    <Text h1>
+                        {phrase.phrase}
                     </Text>
                 </View>
-            }
+            </RectButton>
+            <Card.Divider/>
+            <View>
+                <TextInput
+                    placeholder="Enter your translation..."
+                    onChangeText={setAnswer}
+                />
+            </View>
         </Card>
     );
 };

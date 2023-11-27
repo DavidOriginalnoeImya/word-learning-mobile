@@ -4,6 +4,7 @@ import {NativeStackScreenProps} from "@react-navigation/native-stack";
 import {StackScreenParams} from "../../App";
 import {HeaderBackButton} from "@react-navigation/elements";
 import {Directions, Gesture, GestureDetector} from "react-native-gesture-handler";
+import {Phrase} from "../model/Phrase";
 
 export type PhraseListProps = NativeStackScreenProps<StackScreenParams, "Phrases">;
 
@@ -18,8 +19,6 @@ const PhraseList: FC<IPhraseListComponent> = ({ route, navigation, onBackButtonP
 
     const [curPhraseIndex, setCurPhraseIndex] = useState(0);
 
-    const [checked, setChecked] = useState(false);
-
     const getNextPhraseIndex = () => {
         return curPhraseIndex === phrases.length - 1 ? 0 : curPhraseIndex + 1;
     }
@@ -29,29 +28,25 @@ const PhraseList: FC<IPhraseListComponent> = ({ route, navigation, onBackButtonP
         navigation.pop();
     }
 
-    const onFlingGesture = (phraseMemorized: boolean) => {
-        if (checked) {
-            setCurPhraseIndex(getNextPhraseIndex());
-            setChecked(false);
-        }
+    const onRightFlingGesture = () => {
+        phrases[curPhraseIndex].setNextStatus();
+        setCurPhraseIndex(getNextPhraseIndex());
     }
 
-    const singleTapGesture = Gesture.Tap()
-        .onStart(() => setChecked(!checked));
+    const onLeftFlingGesture = () => {
+        phrases[curPhraseIndex].setPrevStatus();
+        setCurPhraseIndex(getNextPhraseIndex());
+    }
 
-    const rightFlingGesture =  Gesture.Fling()
+    const rightFlingGesture= Gesture.Fling()
         .direction(Directions.RIGHT)
-        .onStart(() => onFlingGesture(true));
+        .onStart(onRightFlingGesture);
 
-    const leftFlingGesture =  Gesture.Fling()
+    const leftFlingGesture= Gesture.Fling()
         .direction(Directions.LEFT)
-        .onStart(() => onFlingGesture(false));
+        .onStart(onLeftFlingGesture);
 
-    const gesture = Gesture.Race(
-        singleTapGesture,
-        rightFlingGesture,
-        leftFlingGesture
-    );
+    const gesture= Gesture.Race(rightFlingGesture, leftFlingGesture);
 
     useEffect( () => {
         navigation.setOptions({
@@ -68,7 +63,6 @@ const PhraseList: FC<IPhraseListComponent> = ({ route, navigation, onBackButtonP
         <GestureDetector gesture={gesture}>
             <PhraseCard
                 phrase={phrases[curPhraseIndex]}
-                checked={checked}
             />
         </GestureDetector>
     );

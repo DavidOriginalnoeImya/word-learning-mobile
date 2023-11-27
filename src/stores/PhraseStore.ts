@@ -8,10 +8,6 @@ interface IServerPhrase {
     translation: string;
 }
 
-export interface IPhrase extends IServerPhrase {
-    memorized: boolean;
-}
-
 class PhraseStore {
     private serverUrl = "http://192.168.31.152:8086/api/phrases";
 
@@ -27,7 +23,7 @@ class PhraseStore {
 
     public initPhrases = async () => {
         if (this.allPhrases.length < this.PHRASE_BATCH_SIZE) {
-            const { data } = await axios.get<Phrase[]>(this.serverUrl);
+            const { data } = await axios.get<IServerPhrase[]>(this.serverUrl);
 
             if (Array.isArray(data)) {
                 this.setAllPhrases(data);
@@ -41,7 +37,7 @@ class PhraseStore {
         const translatedPhrases = this.getPhraseForSaving(this.phrases);
 
         if (translatedPhrases.length > 0) {
-            const { data } = await axios.put<IPhrase[]>(this.serverUrl, translatedPhrases);
+            const { data } = await axios.put<IServerPhrase[]>(this.serverUrl, translatedPhrases);
 
             if (Array.isArray(data)) {
                 this.filterMemorizedPhrases(data);
@@ -52,7 +48,7 @@ class PhraseStore {
         }
     }
 
-    private getPhraseIds(phrases: IPhrase[]) {
+    private getPhraseIds(phrases: IServerPhrase[]) {
         return new Set<bigint>(phrases.map(p => p.id));
     }
 
@@ -62,7 +58,7 @@ class PhraseStore {
             .map(p => this.convertToServerPhrase(p));
     }
 
-    private filterMemorizedPhrases(memorizedPhrases: IPhrase[]) {
+    private filterMemorizedPhrases(memorizedPhrases: IServerPhrase[]) {
         const memorizedPhraseIds = this.getPhraseIds(memorizedPhrases);
 
         this.setAllPhrases(
@@ -72,8 +68,8 @@ class PhraseStore {
         );
     }
 
-    private setAllPhrases(phrases: Phrase[]) {
-        this.allPhrases = phrases;
+    private setAllPhrases(phrases: IServerPhrase[]) {
+        this.allPhrases = phrases.map(sp => new Phrase(sp.id, sp.phrase, sp.translation));
     }
 
     private setPhrases(phrases: Phrase[]) {
