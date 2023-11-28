@@ -1,10 +1,11 @@
-import React, {FC, useEffect, useState} from 'react';
+import React, {FC, useEffect, useRef, useState} from 'react';
 import PhraseCard from "./PhraseCard";
 import {NativeStackScreenProps} from "@react-navigation/native-stack";
 import {StackScreenParams} from "../../App";
 import {HeaderBackButton} from "@react-navigation/elements";
 import {Directions, Gesture, GestureDetector} from "react-native-gesture-handler";
 import {Phrase} from "../model/Phrase";
+import {TextInput} from "react-native";
 
 export type PhraseListProps = NativeStackScreenProps<StackScreenParams, "Phrases">;
 
@@ -46,7 +47,13 @@ const PhraseList: FC<IPhraseListComponent> = ({ route, navigation, onBackButtonP
         .direction(Directions.LEFT)
         .onStart(onLeftFlingGesture);
 
-    const gesture= Gesture.Race(rightFlingGesture, leftFlingGesture);
+    const answerInputRef = useRef<TextInput>(null);
+
+    const upFlingGesture= Gesture.Fling()
+        .direction(Directions.UP)
+        .onStart(() => answerInputRef.current!.focus());
+
+    const gesture= Gesture.Race(rightFlingGesture, leftFlingGesture, upFlingGesture);
 
     useEffect( () => {
         navigation.setOptions({
@@ -63,6 +70,7 @@ const PhraseList: FC<IPhraseListComponent> = ({ route, navigation, onBackButtonP
         <GestureDetector gesture={gesture}>
             <PhraseCard
                 phrase={phrases[curPhraseIndex]}
+                answerInputRef={answerInputRef}
             />
         </GestureDetector>
     );

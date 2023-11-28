@@ -1,6 +1,6 @@
 import phrase from "../components/PhraseCard";
 
-enum Status {
+export enum Status {
     SOURCE_LANG, DEST_LANG, HIDDEN, MEMORIZED
 }
 
@@ -19,10 +19,13 @@ const prevStatus: Record<Status, Status> = {
 };
 
 export class Phrase {
+    get status(): Status {
+        return this._status;
+    }
     private readonly _id: bigint;
     private readonly _phrase: string;
     private readonly _translation: string;
-    status: Status = Status.SOURCE_LANG;
+    private _status: Status = Status.SOURCE_LANG;
 
     constructor(id: bigint, phrase: string, translation: string) {
         this._id = id;
@@ -31,15 +34,15 @@ export class Phrase {
     }
 
     setNextStatus() {
-        this.status = nextStatus[this.status];
+        this._status = nextStatus[this._status];
     }
 
     setPrevStatus() {
-        this.status = prevStatus[this.status];
+        this._status = prevStatus[this._status];
     }
 
     isMemorized = () => {
-        return this.status === Status.MEMORIZED;
+        return this._status === Status.MEMORIZED;
     }
 
     get id(): bigint {
