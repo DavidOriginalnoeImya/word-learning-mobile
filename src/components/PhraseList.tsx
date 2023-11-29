@@ -1,10 +1,9 @@
-import React, {FC, useEffect, useState} from 'react';
+import React, {FC, useEffect} from 'react';
 import PhraseCard from "./PhraseCard";
 import {NativeStackScreenProps} from "@react-navigation/native-stack";
 import {StackScreenParams} from "../../App";
 import {HeaderBackButton} from "@react-navigation/elements";
-import {Directions, Gesture, GestureDetector} from "react-native-gesture-handler";
-import {Phrase} from "../model/Phrase";
+import {View} from "react-native";
 
 export type PhraseListProps = NativeStackScreenProps<StackScreenParams, "Phrases">;
 
@@ -17,36 +16,10 @@ interface IPhraseListComponent {
 const PhraseList: FC<IPhraseListComponent> = ({ route, navigation, onBackButtonPress }) => {
     const { phrases } = route.params;
 
-    const [curPhraseIndex, setCurPhraseIndex] = useState(0);
-
-    const getNextPhraseIndex = () => {
-        return curPhraseIndex === phrases.length - 1 ? 0 : curPhraseIndex + 1;
-    }
-
     const onBackPress = () => {
         onBackButtonPress();
         navigation.pop();
     }
-
-    const onRightFlingGesture = () => {
-        phrases[curPhraseIndex].setNextStatus();
-        setCurPhraseIndex(getNextPhraseIndex());
-    }
-
-    const onLeftFlingGesture = () => {
-        phrases[curPhraseIndex].setPrevStatus();
-        setCurPhraseIndex(getNextPhraseIndex());
-    }
-
-    const rightFlingGesture= Gesture.Fling()
-        .direction(Directions.RIGHT)
-        .onStart(onRightFlingGesture);
-
-    const leftFlingGesture= Gesture.Fling()
-        .direction(Directions.LEFT)
-        .onStart(onLeftFlingGesture);
-
-    const gesture= Gesture.Race(rightFlingGesture, leftFlingGesture);
 
     useEffect( () => {
         navigation.setOptions({
@@ -60,11 +33,17 @@ const PhraseList: FC<IPhraseListComponent> = ({ route, navigation, onBackButtonP
     }, []);
 
     return (
-        <GestureDetector gesture={gesture}>
-            <PhraseCard
-                phrase={phrases[curPhraseIndex]}
-            />
-        </GestureDetector>
+        <View style={{flex: 1}}>
+            {
+                phrases.map((phrase, index) =>
+                    <PhraseCard
+                        phrase={phrase}
+                        index={phrases.length - index}
+                        cardNum={phrases.length}
+                    />
+                )
+            }
+        </View>
     );
 };
 
