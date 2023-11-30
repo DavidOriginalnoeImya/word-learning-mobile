@@ -13,14 +13,6 @@ interface PhraseComponent {
 }
 
 const PhraseCard: FC<PhraseComponent> = ({ phrase, index, cardNum }) => {
-    const [answer, setAnswer] = useState("");
-
-    const [zIndex, setZIndex] = useState(index);
-
-    const [memorized, setMemorized] = useState(false);
-
-    const [answerColor, setAnswerColor] = useState("black");
-
     const getPhraseSourceText = () => {
         return phrase.status === Status.DEST_LANG ? phrase.translation : phrase.phrase;
     }
@@ -29,8 +21,20 @@ const PhraseCard: FC<PhraseComponent> = ({ phrase, index, cardNum }) => {
         return phrase.status === Status.DEST_LANG ? phrase.phrase: phrase.translation;
     }
 
+    const [text, setText] = useState(getPhraseSourceText());
+
+    const [translation, setTranslation] = useState(getPhraseTranslation());
+
+    const [answer, setAnswer] = useState("");
+
+    const [zIndex, setZIndex] = useState(index);
+
+    const [memorized, setMemorized] = useState(false);
+
+    const [answerColor, setAnswerColor] = useState("black");
+
     const getAnswerColor = () => {
-        return isStringsEqual(getPhraseTranslation(), answer) ? "green" : "red";
+        return isStringsEqual(translation, answer) ? "green" : "red";
     }
 
     useEffect(() => {
@@ -39,19 +43,21 @@ const PhraseCard: FC<PhraseComponent> = ({ phrase, index, cardNum }) => {
         }
     }, []);
 
-    const setNextZIndex = () => {
+    const onSideFlingGesture = () => {
         setZIndex(zIndex - cardNum - 1);
+        setMemorized(phrase.isMemorized());
+        setText(getPhraseSourceText());
+        setTranslation(getPhraseTranslation());
     }
 
     const onRightFlingGesture = () => {
-        setNextZIndex();
         phrase.setNextStatus();
-        setMemorized(phrase.isMemorized());
+        onSideFlingGesture();
     }
 
     const onLeftFlingGesture = () => {
-        setNextZIndex();
         phrase.setPrevStatus();
+        onSideFlingGesture();
     }
 
     const rightFlingGesture= Gesture.Fling()
@@ -78,7 +84,7 @@ const PhraseCard: FC<PhraseComponent> = ({ phrase, index, cardNum }) => {
                 >
                     <View style={styles.phrase} pointerEvents="none">
                         <Text h1>
-                            {getPhraseSourceText()}
+                            {text}
                         </Text>
                     </View>
                 </RectButton>
