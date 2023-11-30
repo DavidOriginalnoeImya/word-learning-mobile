@@ -1,6 +1,6 @@
 import React, {FC, useEffect, useRef, useState} from 'react';
 import {Card, Text} from "@rneui/themed";
-import {StyleSheet, TextInput, View} from "react-native";
+import {NativeSyntheticEvent, StyleSheet, TextInput, TextInputSubmitEditingEventData, View} from "react-native";
 import isStringsEqual from "../utils/isStringsEqual";
 import speaker from "../utils/Speaker";
 import {Directions, Gesture, GestureDetector, RectButton} from "react-native-gesture-handler";
@@ -11,6 +11,8 @@ interface PhraseComponent {
     index: number;
     cardNum: number;
 }
+
+type TextInputSubmit = NativeSyntheticEvent<TextInputSubmitEditingEventData>;
 
 const PhraseCard: FC<PhraseComponent> = ({ phrase, index, cardNum }) => {
     const getPhraseSourceText = () => {
@@ -27,21 +29,30 @@ const PhraseCard: FC<PhraseComponent> = ({ phrase, index, cardNum }) => {
 
     const [answer, setAnswer] = useState("");
 
+    const [isAnswerInput, setIsAnswerInput] = useState(false);
+
     const [zIndex, setZIndex] = useState(index);
 
     const [memorized, setMemorized] = useState(false);
 
     const [answerColor, setAnswerColor] = useState("black");
 
-    const getAnswerColor = () => {
-        return isStringsEqual(translation, answer) ? "green" : "red";
-    }
-
     useEffect(() => {
         if (phrase.status !== Status.DEST_LANG) {
             speaker.speak(phrase.phrase);
         }
     }, []);
+
+    const answerInputRef = useRef<TextInput>(null);
+
+    const getAnswerColor = (answer: string) => {
+        return isStringsEqual(translation, answer) ? "green" : "red";
+    }
+
+    const onAnswerSubmit = (event: TextInputSubmit) => {
+        setAnswerColor(getAnswerColor(event.nativeEvent.text));
+        setAnswer(event.nativeEvent.text);
+    }
 
     const onSideFlingGesture = () => {
         setZIndex(zIndex - cardNum - 1);
@@ -68,9 +79,10 @@ const PhraseCard: FC<PhraseComponent> = ({ phrase, index, cardNum }) => {
         .direction(Directions.LEFT)
         .onStart(onLeftFlingGesture);
 
-    const gesture= Gesture.Race(rightFlingGesture, leftFlingGesture);
+    const singleTapGesture = Gesture.Tap()
+        .onStart(() => answerInputRef.current!.focus());
 
-    const answerInputRef = useRef(null);
+    const gesture= Gesture.Race(rightFlingGesture, leftFlingGesture, singleTapGesture);
 
     if (memorized) return null;
 
@@ -83,18 +95,19 @@ const PhraseCard: FC<PhraseComponent> = ({ phrase, index, cardNum }) => {
                     onLongPress={() => speaker.speak(phrase.phrase)}
                 >
                     <View style={styles.phrase} pointerEvents="none">
-                        <Text h1>
-                            {text}
-                        </Text>
+                        <Text h1> {text} </Text>
                     </View>
                 </RectButton>
                 <Card.Divider/>
+                <View style={styles.phrase} pointerEvents="none">
+                    <Text h3 style={{color: answerColor}}>
+                        {answer}
+                    </Text>
+                </View>
                 <View style={styles.phrase}>
                     <TextInput
-                        style={{color: answerColor}}
-                        onChangeText={setAnswer}
                         ref={answerInputRef}
-                        onSubmitEditing={() => setAnswerColor(getAnswerColor())}
+                        onSubmitEditing={onAnswerSubmit}
                     />
                 </View>
             </Card>
