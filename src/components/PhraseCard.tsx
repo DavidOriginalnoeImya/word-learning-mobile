@@ -1,10 +1,10 @@
-import React, {FC, useState} from 'react';
+import React, {FC, useEffect, useRef, useState} from 'react';
 import {Card, Text} from "@rneui/themed";
 import {StyleSheet, TextInput, View} from "react-native";
 import isStringsEqual from "../utils/isStringsEqual";
 import speaker from "../utils/Speaker";
 import {Directions, Gesture, GestureDetector, RectButton} from "react-native-gesture-handler";
-import {Phrase} from "../model/Phrase";
+import {Phrase, Status} from "../model/Phrase";
 
 interface PhraseComponent {
     phrase: Phrase;
@@ -19,9 +19,25 @@ const PhraseCard: FC<PhraseComponent> = ({ phrase, index, cardNum }) => {
 
     const [memorized, setMemorized] = useState(false);
 
-    const getAnswerColor = () => {
-        return isStringsEqual(phrase.translation, answer) ? "green" : "red";
+    const [answerColor, setAnswerColor] = useState("black");
+
+    const getPhraseSourceText = () => {
+        return phrase.status === Status.DEST_LANG ? phrase.translation : phrase.phrase;
     }
+
+    const getPhraseTranslation = () => {
+        return phrase.status === Status.DEST_LANG ? phrase.phrase: phrase.translation;
+    }
+
+    const getAnswerColor = () => {
+        return isStringsEqual(getPhraseTranslation(), answer) ? "green" : "red";
+    }
+
+    useEffect(() => {
+        if (phrase.status !== Status.DEST_LANG) {
+            speaker.speak(phrase.phrase);
+        }
+    }, []);
 
     const setNextZIndex = () => {
         setZIndex(zIndex - cardNum - 1);
@@ -48,6 +64,8 @@ const PhraseCard: FC<PhraseComponent> = ({ phrase, index, cardNum }) => {
 
     const gesture= Gesture.Race(rightFlingGesture, leftFlingGesture);
 
+    const answerInputRef = useRef(null);
+
     if (memorized) return null;
 
     return (
@@ -60,15 +78,17 @@ const PhraseCard: FC<PhraseComponent> = ({ phrase, index, cardNum }) => {
                 >
                     <View style={styles.phrase} pointerEvents="none">
                         <Text h1>
-                            {phrase.phrase}
+                            {getPhraseSourceText()}
                         </Text>
                     </View>
                 </RectButton>
                 <Card.Divider/>
-                <View>
+                <View style={styles.phrase}>
                     <TextInput
-                        placeholder="Enter your translation..."
+                        style={{color: answerColor}}
                         onChangeText={setAnswer}
+                        ref={answerInputRef}
+                        onSubmitEditing={() => setAnswerColor(getAnswerColor())}
                     />
                 </View>
             </Card>
@@ -88,6 +108,9 @@ const styles = StyleSheet.create({
         bottom: 0,
         top: 0,
         position: "absolute",
+        justifyContent: "center",
+        alignItems: "center",
+        flexDirection: "row",
         borderRadius: 20,
         marginBottom: 10
     },
